@@ -1,0 +1,8 @@
+connectors:
+  github:
+    base_url: "https://api.github.com"
+    repos:
+      - "tiangolo/fastapi"
+      - "pydantic/pydantic"
+  basic_auth_api:
+    base_url: "https://httpbin.org/basic-auth/user/passwd"
