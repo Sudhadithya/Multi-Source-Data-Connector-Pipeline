@@ -1,5 +1,6 @@
+from typing import Any, Dict, List
+
 import requests
-from typing import List, Dict, Any
 
 from app.connectors.base import BaseConnector
 from app.utils.logger import get_logger

@@ -1,5 +1,6 @@
+from typing import Any, Dict, List
+
 import requests
-from typing import List, Dict, Any
 
 from app.connectors.base import BaseConnector
 from app.utils.logger import get_logger
@@ -36,26 +37,26 @@ class StripeConnector(BaseConnector):
         data = []
         has_more = True
         starting_after = None
-        
+
         # Limit to 2 pages for demo purposes
         page = 0
         while has_more and page < 2:
             paginated_url = f"{url}?limit=100"
             if starting_after:
                 paginated_url += f"&starting_after={starting_after}"
-                
+
             response = self.session.get(paginated_url)
             response.raise_for_status()
-            
+
             resp_json = response.json()
             page_data = resp_json.get("data", [])
             if not page_data:
                 break
-                
+
             data.extend(page_data)
             has_more = resp_json.get("has_more", False)
             if has_more:
                 starting_after = page_data[-1].get("id")
             page += 1
-            
+
         return data

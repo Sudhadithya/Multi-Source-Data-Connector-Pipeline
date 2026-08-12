@@ -1,5 +1,6 @@
+from typing import Any, Dict, List
+
 import requests
-from typing import List, Dict, Any
 
 from app.connectors.base import BaseConnector
 from app.utils.logger import get_logger
@@ -34,16 +35,16 @@ class NewsAPIConnector(BaseConnector):
 
     def handle_pagination(self, url: str) -> List[Dict[str, Any]]:
         data = []
-        
+
         # NewsAPI free tier limits to 100 results total, page size is max 100
         # So we just fetch page 1
         paginated_url = f"{url}&pageSize=100&page=1"
         response = self.session.get(paginated_url)
         response.raise_for_status()
-        
+
         resp_json = response.json()
         articles = resp_json.get("articles", [])
         if articles:
             data.extend(articles)
-            
+
         return data

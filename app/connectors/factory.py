@@ -1,9 +1,10 @@
-from app.connectors.github import GitHubConnector
+from app.config import settings
 from app.connectors.basic_auth import BasicAuthConnector
-from app.connectors.stripe import StripeConnector
+from app.connectors.github import GitHubConnector
 from app.connectors.newsapi import NewsAPIConnector
 from app.connectors.openweathermap import OpenWeatherMapConnector
-from app.config import settings
+from app.connectors.stripe import StripeConnector
+
 
 class ConnectorFactory:
     @staticmethod

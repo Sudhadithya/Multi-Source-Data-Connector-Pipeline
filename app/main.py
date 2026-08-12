@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from pydantic import BaseModel
 
 from app.connectors.factory import ConnectorFactory
-from app.transform.transformer import Transformer
 from app.loader.postgres import init_db, upsert_data
+from app.transform.transformer import Transformer
 from app.utils.logger import get_logger
 
 logger = get_logger("main")
@@ -17,6 +17,7 @@ def read_root():
 @app.get("/health")
 def health_check():
     from sqlalchemy import text
+
     from app.loader.postgres import SessionLocal
     db = SessionLocal()
     try:
@@ -31,6 +32,7 @@ def health_check():
 @app.get("/data/{source_name}")
 def view_data(source_name: str):
     from sqlalchemy import select
+
     from app.loader.postgres import SessionLocal, get_dynamic_table
 
     table = get_dynamic_table(source_name, create_if_missing=False)
@@ -51,7 +53,7 @@ def view_data(source_name: str):
         ]
     except Exception as e:
         logger.error(f"Error fetching data for {source_name}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         db.close()
 
@@ -69,19 +71,19 @@ def run_sync_pipeline(connector_name: str):
         # 1. Connector Layer
         connector = ConnectorFactory.get_connector(connector_name)
         raw_data = connector.fetch_data()
-        
+
         if not raw_data:
             logger.info(f"No data fetched for {connector_name}")
             return
-            
+
         # 2. Transform Layer
         transformer = Transformer()
         transformed_data = transformer.transform(connector_name, raw_data)
-        
+
         # 3. Loader Layer
         upsert_data(transformed_data, connector_name)
         logger.info(f"Completed sync pipeline for connector: {connector_name}")
-        
+
     except Exception as e:
         logger.error(f"Sync pipeline failed for {connector_name}: {e}")
 
@@ -91,11 +93,11 @@ def trigger_sync(connector_name: str, background_tasks: BackgroundTasks):
         # Validate connector exists
         ConnectorFactory.get_connector(connector_name)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-        
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
     # Run sync in background so we don't block the API
     background_tasks.add_task(run_sync_pipeline, connector_name)
-    
+
     return SyncResponse(
         status="success",
         message=f"Sync process for '{connector_name}' triggered in the background."

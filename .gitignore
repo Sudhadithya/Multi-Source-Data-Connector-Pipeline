@@ -3,3 +3,8 @@ __pycache__/
 .env
 .pytest_cache/
 venv/
+
+.vscode/
+V2-PLAN.md
+changes.md
+ruff.toml

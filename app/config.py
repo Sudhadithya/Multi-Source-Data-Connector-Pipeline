@@ -1,15 +1,17 @@
 import os
+
 import yaml
 from pydantic_settings import BaseSettings
+
 
 class Settings(BaseSettings):
     database_url: str = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5433/pipeline_db")
     config_file: str = "app/config.yaml"
-    
+
     github_token: str = ""
     basic_auth_username: str = ""
     basic_auth_password: str = ""
-    
+
     stripe_api_key: str = ""
     newsapi_key: str = ""
     openweather_api_key: str = ""
