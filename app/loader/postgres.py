@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine, Column, String, DateTime, JSON, Table, MetaData, inspect
-from sqlalchemy.orm import sessionmaker, declarative_base
+from datetime import datetime, timezone
+
+from sqlalchemy import JSON, Column, DateTime, MetaData, String, Table, create_engine, inspect
 from sqlalchemy.dialects.postgresql import insert
-from datetime import datetime
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.config import settings
 from app.utils.logger import get_logger
@@ -11,6 +12,10 @@ logger = get_logger("loader")
 Base = declarative_base()
 metadata_obj = MetaData()
 
+def _utcnow() -> datetime:
+    # Naive UTC, to match the tz-naive DateTime columns below
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
 class FailedRecord(Base):
     __tablename__ = "failed_records"
 
@@ -18,7 +23,7 @@ class FailedRecord(Base):
     source = Column(String, primary_key=True)
     raw_data = Column(JSON)
     error_reason = Column(String)
-    failed_at = Column(DateTime, default=datetime.utcnow)
+    failed_at = Column(DateTime, default=_utcnow)
 
 engine = create_engine(settings.database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -59,13 +64,13 @@ def init_db():
 def insert_failed_record(source: str, raw_data: dict, error_reason: str):
     db = SessionLocal()
     try:
-        record_id = raw_data.get("id") or raw_data.get("uuid") or str(datetime.utcnow().timestamp())
+        record_id = raw_data.get("id") or raw_data.get("uuid") or str(_utcnow().timestamp())
         stmt = insert(FailedRecord).values(
             id=str(record_id),
             source=source,
             raw_data=raw_data,
             error_reason=error_reason,
-            failed_at=datetime.utcnow()
+            failed_at=_utcnow()
         )
         stmt = stmt.on_conflict_do_update(
             index_elements=["id", "source"],
@@ -89,11 +94,11 @@ def upsert_data(records, connector_name: str = "default"):
     """
     if not records:
         return
-        
+
     db = SessionLocal()
     try:
         table = get_dynamic_table(connector_name)
-        
+
         stmt = insert(table).values([{
             "id": r.id,
             "source": r.source,
