@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, DateTime, JSON
+from sqlalchemy import create_engine, Column, String, DateTime, JSON, Table, MetaData
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.dialects.postgresql import insert
 from datetime import datetime
@@ -9,16 +9,7 @@ from app.utils.logger import get_logger
 logger = get_logger("loader")
 
 Base = declarative_base()
-
-class NormalizedData(Base):
-    __tablename__ = "normalized_data"
-
-    id = Column(String, primary_key=True)
-    source = Column(String, primary_key=True)
-    title = Column(String)
-    description = Column(String, nullable=True)
-    created_at = Column(DateTime)
-    raw_data = Column(JSON)
+metadata_obj = MetaData()
 
 class FailedRecord(Base):
     __tablename__ = "failed_records"
@@ -31,6 +22,28 @@ class FailedRecord(Base):
 
 engine = create_engine(settings.database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_dynamic_table(source_name: str) -> Table:
+    # Use the source name as the table name
+    safe_name = "".join([c if c.isalnum() else "_" for c in source_name]).lower()
+    table_name = f"data_{safe_name}"
+    
+    if table_name in metadata_obj.tables:
+        return metadata_obj.tables[table_name]
+        
+    table = Table(
+        table_name,
+        metadata_obj,
+        Column("id", String, primary_key=True),
+        Column("source", String, primary_key=True),
+        Column("title", String),
+        Column("description", String, nullable=True),
+        Column("created_at", DateTime),
+        Column("raw_data", JSON)
+    )
+    
+    table.create(engine, checkfirst=True)
+    return table
 
 def init_db():
     logger.info("Initializing database schema...")
@@ -63,16 +76,18 @@ def insert_failed_record(source: str, raw_data: dict, error_reason: str):
     finally:
         db.close()
 
-def upsert_data(records):
+def upsert_data(records, connector_name: str = "default"):
     """
-    Upsert data to PostgreSQL.
+    Upsert data to PostgreSQL in a dynamically named table.
     """
     if not records:
         return
         
     db = SessionLocal()
     try:
-        stmt = insert(NormalizedData).values([{
+        table = get_dynamic_table(connector_name)
+        
+        stmt = insert(table).values([{
             "id": r.id,
             "source": r.source,
             "title": r.title,
@@ -96,7 +111,7 @@ def upsert_data(records):
 
         db.execute(stmt)
         db.commit()
-        logger.info(f"Successfully upserted {len(records)} records into PostgreSQL.")
+        logger.info(f"Successfully upserted {len(records)} records into table '{table.name}'.")
     except Exception as e:
         db.rollback()
         logger.error(f"Error during upsert: {e}")

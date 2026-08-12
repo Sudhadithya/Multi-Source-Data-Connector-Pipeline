@@ -7,7 +7,8 @@ from datetime import datetime, timezone
 @pytest.fixture
 def mock_db_session():
     with patch("app.loader.postgres.SessionLocal") as mock_session:
-        yield mock_session
+        with patch("app.loader.postgres.Table.create"):
+            yield mock_session
 
 def test_upsert_data_success(mock_db_session):
     mock_session_instance = mock_db_session.return_value
