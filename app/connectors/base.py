@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 
 class BaseConnector(ABC):
     def __init__(self, config: Dict[str, Any]):

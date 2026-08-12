@@ -1,5 +1,7 @@
 # Multi-Source Data Connector Pipeline
 
+[![CI](https://github.com/Sudhadithya/Multi-Source-Data-Connector-Pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Sudhadithya/Multi-Source-Data-Connector-Pipeline/actions/workflows/ci.yml)
+
 A scalable, extensible data pipeline built with Python, FastAPI, and PostgreSQL to extract, transform, and load (ETL) data from various APIs into a centralized database.
 
 ## Architecture
@@ -71,3 +73,12 @@ Unit tests are written using `pytest`. Database operations are mocked to ensure 
 pip install -r requirements.txt
 pytest tests/
 ```
+
+Linting uses `ruff` (config in `ruff.toml`):
+
+```bash
+ruff check .
+```
+
+Both run automatically on every pull request and on pushes to `main` via
+[GitHub Actions](.github/workflows/ci.yml); the check fails if either fails.

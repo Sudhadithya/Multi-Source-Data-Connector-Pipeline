@@ -1,5 +1,5 @@
-import pytest
 from app.transform.transformer import Transformer
+
 
 def test_transform_github_valid():
     raw_data = [
@@ -12,7 +12,7 @@ def test_transform_github_valid():
     ]
     transformer = Transformer()
     transformed = transformer.transform("github", raw_data)
-    
+
     assert len(transformed) == 1
     assert transformed[0].id == "123"
     assert transformed[0].title == "test-repo"
@@ -29,7 +29,7 @@ def test_transform_basic_auth_valid():
     ]
     transformer = Transformer()
     transformed = transformer.transform("basic_auth_api", raw_data)
-    
+
     assert len(transformed) == 1
     assert transformed[0].id == "abc-123"
     assert transformed[0].title == "Auth Resource"
@@ -126,7 +126,7 @@ def test_transform_unknown_source(caplog):
     raw_data = [{"id": 1}]
     transformer = Transformer()
     transformed = transformer.transform("unknown_source", raw_data)
-    
+
     assert len(transformed) == 0
     assert "Unknown source: unknown_source" in caplog.text
 
@@ -134,7 +134,7 @@ def test_transform_handles_missing_fields():
     raw_data = [{}] # completely empty
     transformer = Transformer()
     transformed = transformer.transform("github", raw_data)
-    
+
     assert len(transformed) == 1
     assert transformed[0].title == "Untitled"
     assert transformed[0].description is None

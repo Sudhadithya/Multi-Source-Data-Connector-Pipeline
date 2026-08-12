@@ -1,8 +1,11 @@
-import pytest
-from unittest.mock import MagicMock, patch
-from app.loader.postgres import upsert_data, insert_failed_record, get_dynamic_table
-from app.models.schema import CommonData
 from datetime import datetime, timezone
+from unittest.mock import patch
+
+import pytest
+
+from app.loader.postgres import get_dynamic_table, insert_failed_record, upsert_data
+from app.models.schema import CommonData
+
 
 @pytest.fixture
 def mock_db_session():
@@ -12,47 +15,47 @@ def mock_db_session():
 
 def test_upsert_data_success(mock_db_session):
     mock_session_instance = mock_db_session.return_value
-    
+
     records = [
         CommonData(
-            id="1", 
-            source="github", 
-            title="test", 
-            created_at=datetime.now(timezone.utc), 
+            id="1",
+            source="github",
+            title="test",
+            created_at=datetime.now(timezone.utc),
             raw_data={"test": "data"}
         )
     ]
-    
+
     upsert_data(records)
-    
+
     assert mock_session_instance.execute.called
     assert mock_session_instance.commit.called
     assert not mock_session_instance.rollback.called
 
 def test_upsert_data_empty(mock_db_session):
     mock_session_instance = mock_db_session.return_value
-    
+
     upsert_data([])
-    
+
     assert not mock_session_instance.execute.called
 
 def test_upsert_data_exception(mock_db_session):
     mock_session_instance = mock_db_session.return_value
     mock_session_instance.execute.side_effect = Exception("DB Error")
-    
+
     records = [
         CommonData(
-            id="1", 
-            source="github", 
-            title="test", 
-            created_at=datetime.now(timezone.utc), 
+            id="1",
+            source="github",
+            title="test",
+            created_at=datetime.now(timezone.utc),
             raw_data={}
         )
     ]
-    
+
     with pytest.raises(Exception, match="DB Error"):
         upsert_data(records)
-        
+
     assert mock_session_instance.rollback.called
     assert not mock_session_instance.commit.called
 

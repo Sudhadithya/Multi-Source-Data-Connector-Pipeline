@@ -1,8 +1,8 @@
-import pytest
-from unittest.mock import MagicMock, patch
-from app.connectors.stripe import StripeConnector
+from unittest.mock import MagicMock
+
 from app.connectors.newsapi import NewsAPIConnector
 from app.connectors.openweathermap import OpenWeatherMapConnector
+from app.connectors.stripe import StripeConnector
 
 
 def make_connector(config=None):

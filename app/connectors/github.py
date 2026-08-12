@@ -1,6 +1,7 @@
+from typing import Any, Dict, List
+
 import requests
-from typing import List, Dict, Any
-from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from app.connectors.base import BaseConnector
 from app.utils.logger import get_logger
@@ -46,7 +47,7 @@ class GitHubConnector(BaseConnector):
                 logger.info(f"Fetching repo info for {repo}")
                 response = self._make_request(url)
                 all_data.append(response.json())
-                
+
                 # Fetch issues for the repo using pagination
                 # For demonstration, limit to a small number of pages or items
                 issues_url = f"{url}/issues"
@@ -69,7 +70,7 @@ class GitHubConnector(BaseConnector):
             if not page_data:
                 break
             data.extend(page_data)
-            
+
             # Check link header for next page
             if "next" not in response.links:
                 break
