@@ -9,29 +9,45 @@ The pipeline strictly follows a 3-layer architecture for modularity and maintain
 ```mermaid
 graph TD
     subgraph Connectors [Connector Layer]
-        A[GitHub API] --> C(GitHubConnector)
-        B[Basic Auth API] --> D(BasicAuthConnector)
-        C -->|Raw JSON| E
-        D -->|Raw JSON| E
+        A[GitHub API] --> CA(GitHubConnector)
+        B[Basic Auth API] --> CB(BasicAuthConnector)
+        C[Stripe API] --> CC(StripeConnector)
+        D[NewsAPI] --> CD(NewsAPIConnector)
+        F[OpenWeatherMap API] --> CF(OpenWeatherMapConnector)
+        CA -->|Raw JSON| E
+        CB -->|Raw JSON| E
+        CC -->|Raw JSON| E
+        CD -->|Raw JSON| E
+        CF -->|Raw JSON| E
     end
 
     subgraph Transform [Transform Layer]
-        E(Transformer) -->|Normalize & Standardize| F{CommonData Schema}
+        E(Transformer) -->|Normalize & Standardize| G{CommonData Schema}
         E -.->|On Failure| J[(Dead Letter Table)]
     end
 
     subgraph Loader [Loader Layer]
-        F -->|Upsert| G(PostgreSQL loader)
-        G --> H[(Normalized Data Table)]
+        G -->|Upsert| H(PostgreSQL loader)
+        H --> I[(data_&lt;connector_name&gt; tables)]
     end
 
     API[FastAPI Endpoint] -->|Triggers| Connectors
 ```
 
+## Connectors
+
+| Connector | Auth style | Pagination |
+|---|---|---|
+| GitHub | Bearer token | Link-header, page-based |
+| Basic Auth API | HTTP basic auth | none |
+| Stripe | Bearer token | cursor (`starting_after`) |
+| NewsAPI | API key header | single page |
+| OpenWeatherMap | API key query param | none |
+
 ## Features
-- **Extensible Connectors**: Base abstract class to easily add new sources. Handles authentication and pagination.
+- **Extensible Connectors**: Base abstract class to easily add new sources with genuinely different auth/pagination styles. Handles authentication and pagination.
 - **Resiliency**: Built-in exponential backoff retries (via `tenacity`) for rate-limiting (HTTP 429).
-- **Idempotent Loading**: PostgreSQL `ON CONFLICT DO UPDATE` ensures no duplicate records on multiple runs.
+- **Idempotent Loading**: PostgreSQL `ON CONFLICT DO UPDATE` on a dynamically named table per source (`data_<connector_name>`) ensures no duplicate records on multiple runs.
 - **Dead Letter Queue**: Failed records during transformation or loading are logged to a `failed_records` table for debugging.
 - **Health Checks**: `/health` endpoint to monitor API and Database connection status.
 

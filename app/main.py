@@ -28,19 +28,30 @@ def health_check():
     finally:
         db.close()
 
-@app.get("/data")
-def view_data():
-    from app.loader.postgres import SessionLocal, NormalizedData
+@app.get("/data/{source_name}")
+def view_data(source_name: str):
+    from sqlalchemy import select
+    from app.loader.postgres import SessionLocal, get_dynamic_table
+
+    table = get_dynamic_table(source_name, create_if_missing=False)
+    if table is None:
+        raise HTTPException(status_code=404, detail=f"No data found for source '{source_name}'")
+
     db = SessionLocal()
     try:
-        data = db.query(NormalizedData).limit(100).all()
+        stmt = select(table).limit(100)
+        data = db.execute(stmt).fetchall()
         return [
             {
+                "id": d.id,
                 "source": d.source,
                 "title": d.title,
                 "created_at": d.created_at
             } for d in data
         ]
+    except Exception as e:
+        logger.error(f"Error fetching data for {source_name}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         db.close()
 
@@ -68,7 +79,7 @@ def run_sync_pipeline(connector_name: str):
         transformed_data = transformer.transform(connector_name, raw_data)
         
         # 3. Loader Layer
-        upsert_data(transformed_data)
+        upsert_data(transformed_data, connector_name)
         logger.info(f"Completed sync pipeline for connector: {connector_name}")
         
     except Exception as e:

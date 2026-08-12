@@ -6,3 +6,23 @@ connectors:
       - "pydantic/pydantic"
   basic_auth_api:
     base_url: "https://httpbin.org/basic-auth/user/passwd"
+  stripe:
+    base_url: "https://api.stripe.com/v1"
+    endpoints:
+      - "customers"
+      - "charges"
+  newsapi:
+    base_url: "https://newsapi.org/v2"
+    queries:
+      - "technology"
+      - "python"
+  openweathermap:
+    base_url: "https://api.openweathermap.org/data/2.5"
+    cities:
+      - "London"
+      - "New York"
+      - "Tokyo"
+      - "Mumbai"
+      - "Dubai"
+      - "Toronto"
+      - "Sydney"

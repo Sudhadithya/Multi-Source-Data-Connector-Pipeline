@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     github_token: str = ""
     basic_auth_username: str = ""
     basic_auth_password: str = ""
+    
+    stripe_api_key: str = ""
+    newsapi_key: str = ""
+    openweather_api_key: str = ""
 
     model_config = {
         "env_file": ".env",
@@ -27,6 +31,12 @@ class Settings(BaseSettings):
                     config["basic_auth_api"]["username"] = self.basic_auth_username
                 if self.basic_auth_password:
                     config["basic_auth_api"]["password"] = self.basic_auth_password
+            if "stripe" in config and self.stripe_api_key:
+                config["stripe"]["api_key"] = self.stripe_api_key
+            if "newsapi" in config and self.newsapi_key:
+                config["newsapi"]["api_key"] = self.newsapi_key
+            if "openweathermap" in config and self.openweather_api_key:
+                config["openweathermap"]["api_key"] = self.openweather_api_key
             return config
 
 settings = Settings()
