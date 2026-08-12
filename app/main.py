@@ -32,9 +32,13 @@ def health_check():
 def view_data(source_name: str):
     from sqlalchemy import select
     from app.loader.postgres import SessionLocal, get_dynamic_table
+
+    table = get_dynamic_table(source_name, create_if_missing=False)
+    if table is None:
+        raise HTTPException(status_code=404, detail=f"No data found for source '{source_name}'")
+
     db = SessionLocal()
     try:
-        table = get_dynamic_table(source_name)
         stmt = select(table).limit(100)
         data = db.execute(stmt).fetchall()
         return [

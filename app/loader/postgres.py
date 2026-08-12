@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, DateTime, JSON, Table, MetaData
+from sqlalchemy import create_engine, Column, String, DateTime, JSON, Table, MetaData, inspect
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.dialects.postgresql import insert
 from datetime import datetime
@@ -23,15 +23,8 @@ class FailedRecord(Base):
 engine = create_engine(settings.database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def get_dynamic_table(source_name: str) -> Table:
-    # Use the source name as the table name
-    safe_name = "".join([c if c.isalnum() else "_" for c in source_name]).lower()
-    table_name = f"data_{safe_name}"
-    
-    if table_name in metadata_obj.tables:
-        return metadata_obj.tables[table_name]
-        
-    table = Table(
+def _define_table(table_name: str) -> Table:
+    return Table(
         table_name,
         metadata_obj,
         Column("id", String, primary_key=True),
@@ -41,7 +34,21 @@ def get_dynamic_table(source_name: str) -> Table:
         Column("created_at", DateTime),
         Column("raw_data", JSON)
     )
-    
+
+def get_dynamic_table(source_name: str, create_if_missing: bool = True) -> Table:
+    # Use the source name as the table name
+    safe_name = "".join([c if c.isalnum() else "_" for c in source_name]).lower()
+    table_name = f"data_{safe_name}"
+
+    if table_name in metadata_obj.tables:
+        return metadata_obj.tables[table_name]
+
+    if not create_if_missing:
+        if not inspect(engine).has_table(table_name):
+            return None
+        return _define_table(table_name)
+
+    table = _define_table(table_name)
     table.create(engine, checkfirst=True)
     return table
 
