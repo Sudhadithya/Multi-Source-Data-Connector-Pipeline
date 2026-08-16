@@ -1,0 +1,72 @@
+{
+  "label": "strategy-n50",
+  "started_at": "2026-08-16T19:18:15.909975+00:00",
+  "config": {
+    "records": 50,
+    "dlq_records": 20000,
+    "runs": 5,
+    "dlq_runs": 2,
+    "payload_bytes": 384,
+    "idempotency_chunk": 1000,
+    "preload": 500000,
+    "label": "strategy-n50",
+    "only": [
+      "strategy"
+    ],
+    "verbose": false
+  },
+  "environment": {
+    "python": "3.12.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_count": 20,
+    "postgres": "PostgreSQL 17.9 (Debian 17.9-1.pgdg13+1)",
+    "postgres_settings": {
+      "shared_buffers": "128MB",
+      "synchronous_commit": "on",
+      "fsync": "on",
+      "max_wal_size": "1GB"
+    }
+  },
+  "mean_record_bytes": 673.52,
+  "strategy": {
+    "records": 50,
+    "points": [
+      {
+        "strategy": "multirow",
+        "runs": 5,
+        "median_s": 0.05293259999962174,
+        "min_s": 0.017251400000532158,
+        "max_s": 0.05641249999825959,
+        "all_s": [
+          0.017251400000532158,
+          0.05532649999804562,
+          0.05293259999962174,
+          0.05641249999825959,
+          0.05276880000019446
+        ],
+        "records": 50,
+        "records_per_s": 944.5974692412105,
+        "rows_loaded": 50
+      },
+      {
+        "strategy": "copy",
+        "runs": 5,
+        "median_s": 0.04998110000087763,
+        "min_s": 0.04845539999951143,
+        "max_s": 0.053176400000666035,
+        "all_s": [
+          0.04993290000129491,
+          0.04998110000087763,
+          0.053176400000666035,
+          0.052697500002977904,
+          0.04845539999951143
+        ],
+        "records": 50,
+        "records_per_s": 1000.3781429204647,
+        "rows_loaded": 50
+      }
+    ]
+  },
+  "finished_at": "2026-08-16T19:18:16.719032+00:00"
+}

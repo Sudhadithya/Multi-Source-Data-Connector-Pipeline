@@ -1,0 +1,30 @@
+# Isolated Postgres for benchmarking.
+#
+# Same image and storage layout as the `db` service in the root
+# docker-compose.yml, but on its own port, its own volume, and starting empty —
+# so benchmark runs never touch development data and always begin from a known
+# state.
+#
+#   docker compose -p msdcp-bench -f benchmarks/docker-compose.bench.yml up -d
+#   DATABASE_URL=postgresql://postgres:benchpass@localhost:5434/bench_db \
+#       python -m benchmarks.run_all --label baseline
+
+services:
+  db_bench:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=benchpass
+      - POSTGRES_DB=bench_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - bench_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bench_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  bench_pgdata:
