@@ -11,6 +11,12 @@ class Transformer:
     @staticmethod
     def transform(source: str, raw_records: List[Dict[str, Any]]) -> List[CommonData]:
         transformed = []
+        # Failures are collected here and written once at the end of the batch.
+        # Each record is still isolated by its own try/except and the loop still
+        # continues past a bad record — only the *write* is batched, because
+        # committing one transaction per bad record dominates the runtime of any
+        # sync with a non-trivial error rate.
+        failures = []
         for raw in raw_records:
             try:
                 if source == "github":
@@ -79,8 +85,14 @@ class Transformer:
             except Exception as e:
                 error_msg = f"Error transforming record: {str(e)}"
                 logger.error(f"{error_msg} for source {source}")
-                from app.loader.postgres import insert_failed_record
-                insert_failed_record(source, raw, error_msg)
+                failures.append((raw, error_msg))
 
-        logger.info(f"Transformed {len(transformed)} records for source: {source}")
+        if failures:
+            from app.loader.postgres import insert_failed_records
+            insert_failed_records(source, failures)
+
+        logger.info(
+            f"Transformed {len(transformed)} records for source: {source} "
+            f"({len(failures)} dead-lettered)"
+        )
         return transformed

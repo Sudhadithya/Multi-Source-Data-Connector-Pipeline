@@ -1,0 +1,164 @@
+{
+  "label": "copy-strategy",
+  "started_at": "2026-08-16T19:14:45.953840+00:00",
+  "config": {
+    "records": 50000,
+    "dlq_records": 20000,
+    "runs": 5,
+    "dlq_runs": 2,
+    "payload_bytes": 384,
+    "idempotency_chunk": 1000,
+    "preload": 500000,
+    "label": "copy-strategy",
+    "only": [
+      "parity",
+      "strategy",
+      "steady"
+    ],
+    "verbose": false
+  },
+  "environment": {
+    "python": "3.12.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_count": 20,
+    "postgres": "PostgreSQL 17.9 (Debian 17.9-1.pgdg13+1)",
+    "postgres_settings": {
+      "shared_buffers": "128MB",
+      "synchronous_commit": "on",
+      "fsync": "on",
+      "max_wal_size": "1GB"
+    }
+  },
+  "mean_record_bytes": 673.52,
+  "parity": {
+    "records": 5011,
+    "nasty_records": 11,
+    "multirow_rows": 5011,
+    "copy_rows": 5011,
+    "rows_match": true,
+    "digest_match": true,
+    "json_normalized_digest_match": true,
+    "multirow_digest": "12b7d33c7e2911d98dc454b701686ebb",
+    "copy_digest": "12b7d33c7e2911d98dc454b701686ebb"
+  },
+  "strategy": {
+    "records": 50000,
+    "points": [
+      {
+        "strategy": "multirow",
+        "runs": 5,
+        "median_s": 7.19636189999801,
+        "min_s": 6.825065900000482,
+        "max_s": 7.694637100001273,
+        "all_s": [
+          6.965123600002698,
+          6.825065900000482,
+          7.19636189999801,
+          7.286496300002909,
+          7.694637100001273
+        ],
+        "records": 50000,
+        "records_per_s": 6947.955188303388,
+        "rows_loaded": 50000
+      },
+      {
+        "strategy": "copy",
+        "runs": 5,
+        "median_s": 1.3261915000002773,
+        "min_s": 1.2937216999998782,
+        "max_s": 1.4083231000004162,
+        "all_s": [
+          1.3034546000017144,
+          1.3989409999994677,
+          1.4083231000004162,
+          1.2937216999998782,
+          1.3261915000002773
+        ],
+        "records": 50000,
+        "records_per_s": 37701.94575971083,
+        "rows_loaded": 50000
+      }
+    ]
+  },
+  "steady": {
+    "records_per_load": 50000,
+    "preload_rows": 500000,
+    "preload_s": 14.452363599997625,
+    "rows_before": 500000,
+    "table_size_before": "454 MB",
+    "rows_after": 1000000,
+    "table_size_after": "1343 MB",
+    "points": [
+      {
+        "strategy": "multirow",
+        "workload": "new_rows",
+        "runs": 5,
+        "median_s": 7.974099399998522,
+        "min_s": 7.900594899998396,
+        "max_s": 8.535906399996747,
+        "all_s": [
+          7.974099399998522,
+          7.939665199999581,
+          8.535906399996747,
+          8.283517600000778,
+          7.900594899998396
+        ],
+        "records": 50000,
+        "records_per_s": 6270.300568363778
+      },
+      {
+        "strategy": "multirow",
+        "workload": "existing_rows",
+        "runs": 5,
+        "median_s": 8.702624800000194,
+        "min_s": 8.493887199998426,
+        "max_s": 9.19958840000254,
+        "all_s": [
+          8.550558999999339,
+          8.493887199998426,
+          8.982732899999974,
+          9.19958840000254,
+          8.702624800000194
+        ],
+        "records": 50000,
+        "records_per_s": 5745.393045095875
+      },
+      {
+        "strategy": "copy",
+        "workload": "new_rows",
+        "runs": 5,
+        "median_s": 1.4400574999999662,
+        "min_s": 1.4229655999988609,
+        "max_s": 1.4541274000002886,
+        "all_s": [
+          1.4229655999988609,
+          1.4541274000002886,
+          1.426622100003442,
+          1.44829000000027,
+          1.4400574999999662
+        ],
+        "records": 50000,
+        "records_per_s": 34720.835799960194
+      },
+      {
+        "strategy": "copy",
+        "workload": "existing_rows",
+        "runs": 5,
+        "median_s": 2.0408715000012307,
+        "min_s": 1.9773136000003433,
+        "max_s": 2.264310499998828,
+        "all_s": [
+          2.2100272000025143,
+          2.0408715000012307,
+          1.9773136000003433,
+          2.002732200002356,
+          2.264310499998828
+        ],
+        "records": 50000,
+        "records_per_s": 24499.337660391575
+      }
+    ]
+  },
+  "finished_at": "2026-08-16T19:17:51.819980+00:00"
+}

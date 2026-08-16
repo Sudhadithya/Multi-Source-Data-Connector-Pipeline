@@ -1,0 +1,263 @@
+{
+  "label": "batched-dlq",
+  "started_at": "2026-08-16T17:45:18.900363+00:00",
+  "config": {
+    "records": 50000,
+    "dlq_records": 20000,
+    "runs": 3,
+    "dlq_runs": 2,
+    "payload_bytes": 384,
+    "idempotency_chunk": 1000,
+    "label": "batched-dlq",
+    "only": null,
+    "verbose": false
+  },
+  "environment": {
+    "python": "3.12.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_count": 20,
+    "postgres": "PostgreSQL 17.9 (Debian 17.9-1.pgdg13+1)",
+    "postgres_settings": {
+      "shared_buffers": "128MB",
+      "synchronous_commit": "on",
+      "fsync": "on",
+      "max_wal_size": "1GB"
+    }
+  },
+  "mean_record_bytes": 677.165,
+  "transform": {
+    "runs": 3,
+    "median_s": 0.5252916000026744,
+    "min_s": 0.49575800000093295,
+    "max_s": 0.5615490999989561,
+    "all_s": [
+      0.49575800000093295,
+      0.5615490999989561,
+      0.5252916000026744
+    ],
+    "records": 50000,
+    "records_per_s": 95185.22664315485,
+    "mean_record_bytes": 677.165
+  },
+  "load": {
+    "records": 50000,
+    "mean_record_bytes": 677.165,
+    "points": [
+      {
+        "chunk_size": 250,
+        "label": "250",
+        "runs": 3,
+        "median_s": 13.601573500000086,
+        "min_s": 13.03441219999877,
+        "max_s": 13.906142000003456,
+        "all_s": [
+          13.906142000003456,
+          13.601573500000086,
+          13.03441219999877
+        ],
+        "records": 50000,
+        "records_per_s": 3676.0452752028787,
+        "rows_loaded": 50000
+      },
+      {
+        "chunk_size": 500,
+        "label": "500",
+        "runs": 3,
+        "median_s": 10.607330800001364,
+        "min_s": 10.354179499998281,
+        "max_s": 11.02605119999862,
+        "all_s": [
+          10.607330800001364,
+          10.354179499998281,
+          11.02605119999862
+        ],
+        "records": 50000,
+        "records_per_s": 4713.721193647847,
+        "rows_loaded": 50000
+      },
+      {
+        "chunk_size": 1000,
+        "label": "1000",
+        "runs": 3,
+        "median_s": 7.563821099996858,
+        "min_s": 7.198400299999776,
+        "max_s": 7.605801800000336,
+        "all_s": [
+          7.563821099996858,
+          7.198400299999776,
+          7.605801800000336
+        ],
+        "records": 50000,
+        "records_per_s": 6610.415468448979,
+        "rows_loaded": 50000
+      },
+      {
+        "chunk_size": 2500,
+        "label": "2500",
+        "runs": 3,
+        "median_s": 7.339843599998858,
+        "min_s": 7.11587640000289,
+        "max_s": 7.486224599997513,
+        "all_s": [
+          7.339843599998858,
+          7.486224599997513,
+          7.11587640000289
+        ],
+        "records": 50000,
+        "records_per_s": 6812.134253106944,
+        "rows_loaded": 50000
+      },
+      {
+        "chunk_size": 5000,
+        "label": "5000",
+        "runs": 3,
+        "median_s": 6.507611699998961,
+        "min_s": 6.446981400000368,
+        "max_s": 6.945681700002751,
+        "all_s": [
+          6.945681700002751,
+          6.446981400000368,
+          6.507611699998961
+        ],
+        "records": 50000,
+        "records_per_s": 7683.310299538613,
+        "rows_loaded": 50000
+      },
+      {
+        "chunk_size": 10000,
+        "label": "10000",
+        "runs": 3,
+        "median_s": 6.865735399998812,
+        "min_s": 6.678798500000994,
+        "max_s": 6.885495300000912,
+        "all_s": [
+          6.678798500000994,
+          6.865735399998812,
+          6.885495300000912
+        ],
+        "records": 50000,
+        "records_per_s": 7282.541066177507,
+        "rows_loaded": 50000
+      },
+      {
+        "chunk_size": null,
+        "label": "single statement",
+        "runs": 3,
+        "median_s": 7.460805299997446,
+        "min_s": 7.367544000000635,
+        "max_s": 7.4776332000001275,
+        "all_s": [
+          7.460805299997446,
+          7.367544000000635,
+          7.4776332000001275
+        ],
+        "records": 50000,
+        "records_per_s": 6701.689427549746,
+        "rows_loaded": 50000
+      }
+    ],
+    "table_size_after": "45 MB"
+  },
+  "idempotency": {
+    "records": 50000,
+    "chunk_size": 1000,
+    "first_load_s": 6.943708800001332,
+    "second_load_s": 7.5332694000026095,
+    "first_load_records_per_s": 7200.762796963837,
+    "second_load_records_per_s": 6637.224469893866,
+    "rows_after_first": 50000,
+    "rows_after_second": 50000,
+    "rows_unchanged": true,
+    "rows_updated_to_v2": 50000,
+    "all_rows_updated": true,
+    "distinct_keys": 50000,
+    "table_size_after": "91 MB"
+  },
+  "dlq": {
+    "records": 20000,
+    "points": [
+      {
+        "error_rate": 0.0,
+        "records": 20000,
+        "expected_failures": 0,
+        "dlq_rows_written": 0,
+        "dlq_rows_match": true,
+        "runs": 2,
+        "median_s": 0.15599475000090024,
+        "min_s": 0.15569020000111777,
+        "max_s": 0.1562993000006827,
+        "all_s": [
+          0.1562993000006827,
+          0.15569020000111777
+        ],
+        "records_per_s": 128209.44294525668
+      },
+      {
+        "error_rate": 0.01,
+        "records": 20000,
+        "expected_failures": 200,
+        "dlq_rows_written": 200,
+        "dlq_rows_match": true,
+        "runs": 2,
+        "median_s": 0.21870990000024904,
+        "min_s": 0.21385860000009416,
+        "max_s": 0.22356120000040391,
+        "all_s": [
+          0.21385860000009416,
+          0.22356120000040391
+        ],
+        "records_per_s": 91445.33466467328
+      },
+      {
+        "error_rate": 0.05,
+        "records": 20000,
+        "expected_failures": 1000,
+        "dlq_rows_written": 1000,
+        "dlq_rows_match": true,
+        "runs": 2,
+        "median_s": 0.34323999999833177,
+        "min_s": 0.27098449999903096,
+        "max_s": 0.4154954999976326,
+        "all_s": [
+          0.27098449999903096,
+          0.4154954999976326
+        ],
+        "records_per_s": 58268.26710201959
+      },
+      {
+        "error_rate": 0.1,
+        "records": 20000,
+        "expected_failures": 2000,
+        "dlq_rows_written": 2000,
+        "dlq_rows_match": true,
+        "runs": 2,
+        "median_s": 0.4145754500004841,
+        "min_s": 0.3859578000010515,
+        "max_s": 0.44319309999991674,
+        "all_s": [
+          0.3859578000010515,
+          0.44319309999991674
+        ],
+        "records_per_s": 48242.123357706405
+      },
+      {
+        "error_rate": 0.25,
+        "records": 20000,
+        "expected_failures": 5000,
+        "dlq_rows_written": 5000,
+        "dlq_rows_match": true,
+        "runs": 2,
+        "median_s": 0.9690492000008817,
+        "min_s": 0.9588850000000093,
+        "max_s": 0.979213400001754,
+        "all_s": [
+          0.9588850000000093,
+          0.979213400001754
+        ],
+        "records_per_s": 20638.786967660468
+      }
+    ]
+  },
+  "finished_at": "2026-08-16T17:48:41.685148+00:00"
+}

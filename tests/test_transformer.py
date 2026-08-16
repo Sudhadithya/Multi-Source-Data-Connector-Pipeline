@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from app.transform.transformer import Transformer
 
 
@@ -129,6 +131,36 @@ def test_transform_unknown_source(caplog):
 
     assert len(transformed) == 0
     assert "Unknown source: unknown_source" in caplog.text
+
+def test_transform_dead_letters_bad_records_and_continues():
+    raw_data = [
+        {"id": 1, "name": "good-one", "created_at": "2023-01-01T00:00:00Z"},
+        {"id": 2, "name": "bad-one", "created_at": "not-a-timestamp"},
+        {"id": 3, "name": "good-two", "created_at": "2023-01-02T00:00:00Z"},
+        {"id": 4, "name": "bad-two", "created_at": "also-not-a-timestamp"},
+    ]
+
+    with patch("app.loader.postgres.insert_failed_records") as mock_dlq:
+        transformed = Transformer().transform("github", raw_data)
+
+    # One bad record must never abort the batch.
+    assert [t.id for t in transformed] == ["1", "3"]
+
+    # Both failures are written, and in a single batched call.
+    assert mock_dlq.call_count == 1
+    source, failures = mock_dlq.call_args[0]
+    assert source == "github"
+    assert [raw["id"] for raw, _ in failures] == [2, 4]
+    assert all("Error transforming record" in reason for _, reason in failures)
+
+def test_transform_does_not_touch_dlq_when_all_records_are_valid():
+    raw_data = [{"id": 1, "name": "good", "created_at": "2023-01-01T00:00:00Z"}]
+
+    with patch("app.loader.postgres.insert_failed_records") as mock_dlq:
+        transformed = Transformer().transform("github", raw_data)
+
+    assert len(transformed) == 1
+    assert not mock_dlq.called
 
 def test_transform_handles_missing_fields():
     raw_data = [{}] # completely empty

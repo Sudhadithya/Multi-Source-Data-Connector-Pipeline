@@ -1,0 +1,48 @@
+{
+  "label": "idempotency-copy",
+  "started_at": "2026-08-16T19:19:16.651672+00:00",
+  "config": {
+    "records": 50000,
+    "dlq_records": 20000,
+    "runs": 3,
+    "dlq_runs": 2,
+    "payload_bytes": 384,
+    "idempotency_chunk": 1000,
+    "preload": 500000,
+    "label": "idempotency-copy",
+    "only": [
+      "idempotency"
+    ],
+    "verbose": false
+  },
+  "environment": {
+    "python": "3.12.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_count": 20,
+    "postgres": "PostgreSQL 17.9 (Debian 17.9-1.pgdg13+1)",
+    "postgres_settings": {
+      "shared_buffers": "128MB",
+      "synchronous_commit": "on",
+      "fsync": "on",
+      "max_wal_size": "1GB"
+    }
+  },
+  "mean_record_bytes": 673.52,
+  "idempotency": {
+    "records": 50000,
+    "chunk_size": 1000,
+    "first_load_s": 1.1590294000016002,
+    "second_load_s": 1.400274999999965,
+    "first_load_records_per_s": 43139.54417371205,
+    "second_load_records_per_s": 35707.27178590009,
+    "rows_after_first": 50000,
+    "rows_after_second": 50000,
+    "rows_unchanged": true,
+    "rows_updated_to_v2": 50000,
+    "all_rows_updated": true,
+    "distinct_keys": 50000,
+    "table_size_after": "91 MB"
+  },
+  "finished_at": "2026-08-16T19:19:19.974466+00:00"
+}
