@@ -36,6 +36,11 @@ graph TD
     API[FastAPI Endpoint] -->|Triggers| Connectors
 ```
 
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) covers each layer in detail: the
+`BaseConnector` contract and how to add a source, the two load strategies and why
+`COPY` is the default, and the design invariants around idempotency and
+dead-letter handling.
+
 ## Connectors
 
 | Connector | Auth style | Pagination |
