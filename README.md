@@ -82,3 +82,7 @@ ruff check .
 
 Both run automatically on every pull request and on pushes to `main` via
 [GitHub Actions](.github/workflows/ci.yml); the check fails if either fails.
+
+`main` is protected by a branch ruleset ([`.github/rulesets/main-protection.json`](.github/rulesets/main-protection.json)):
+changes land only through a pull request with a green `lint-and-test` check,
+and force-pushes and branch deletion are blocked.
